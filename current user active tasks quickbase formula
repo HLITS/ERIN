@@ -1,0 +1,15 @@
+List("\n",
+If(Contains([Active Tasks], "Trial Access") and [Trial Access Shadow]=User(), "Trial Access",  null),
+If(Contains([Active Tasks], "License Review") and [License Negotiation Shadow]=User(), "License Review",  null),
+If(Contains([Active Tasks], "License Negotiation") and [License Negotiation Shadow]=User(), "License Negotiation",  null),
+If(Contains([Active Tasks], "Cost Research") and [Cost Research Shadow]=User(), "Cost Research",  null),
+If(Contains([Active Tasks], "Decision") and [Decision Shadow]=User(), "Decision",  null),
+If(Contains([Active Tasks], "Funding Information") and [Funding Information Shadow]=User(), "Funding Information",  null),
+If(Contains([Active Tasks], "Order with Publisher") and [Order with Publisher Shadow]=User(), "Order with Publisher",  null),
+If(Contains([Active Tasks], "Journal Subscription") and [Journal Subscription Shadow]=User(), "Journal Subscription",  null),
+If(Contains([Active Tasks], "Alma Order Record") and [Order Record & Payment Shadow]=User(), "Alma Order Record",  null),
+If(Contains([Active Tasks], "Access Activation") and [Access Activation Shadow]=User(), "Access Activation",  null),
+If(Contains([Active Tasks], "Proxying") and [Proxying Shadow]=User(), "Proxying",  null),
+If(Contains([Active Tasks], "Alma Activation") and [Alma Activation Shadow]=User(), "Alma Activation",  null),
+If(Contains([Active Tasks], "Final Review") and [Request Review]=User(), "Final Review",  null)
+)
