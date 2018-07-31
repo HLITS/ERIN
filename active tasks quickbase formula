@@ -1,0 +1,65 @@
+var text active=List("\n",
+If([Trial Wanted] and IsNull([Trial End Date]), "Trial Access", null),
+If(([Request Type]="E-Resource, New" or [E-Journal with Package])
+  and ([Acquisition Decision]="" or [Acquisition Decision]="Undecided")
+  and [License Method]="", "License Review", null),
+If(([Acquisition Decision]="Acquire" or [E-Journal No Package]
+  or [Request Type]="E-Resource, Free" or [Request Type]="E-Journal, Free"
+  or [Request Type]="Re-License")
+  and [License Ready]=false, "License Negotiation", null),
+If(([Request Type]="E-Resource, New" or [E-Journal with Package] or [Acquisition Info]) 
+  and [Order Placed with Vendor]=false
+  and [One-Time Purchase Cost]=0
+  and [Subscription Cost]=0, "Cost Research", null),
+If([Ready for Acquis Decision] and 
+   ((not(IsNull([Trial End Date])) and ([Proxied URL]<>"" or [URN]<>""))
+   or [License Method]<>""), "Decision", null),
+If(([Acquisition Decision]="Acquire" or
+   ([Acquisition Info] and ([One-Time Purchase Cost]<>0
+       or [Subscription Cost]<>0)))
+   and [FUNDING COMPLETE]=false, "Funding Information", null),
+If([Order Placed with Vendor]=false and [Acquisition Decision]="Acquire"
+    and [License Ready] and [FUNDING COMPLETE], "Order with Publisher", null),
+If([E-Journal No Package] and [E-Journal Current Online Subscription]="No"
+    and [Online Subscription Ordered]=false and [License Ready] 
+    and [Alma Collection Name]<>"" and Trim([Alma Collection Name])<>"tbd"
+    and [Journal Fund Code]<>"", "Journal Subscription", null),
+If(([Acquisition Decision]="Acquire" and [Order Placed with Vendor] 
+    and ([Alma POL or Aleph Order # (Subscription)]<>"" and [Alma POL or Aleph Order # (One-Time)]<>"")
+    and ([Subscription Total Funding %]=100 or [One-Time Purchase Total Funding %]=100)
+    and ([Alma Collection Name]<>"" and Trim([Alma Collection Name])<>"tbd")
+    ), "Alma Order Record", null),
+If([Access Activated?]=false and
+  ((([Request Type]="E-Resource, New" or [E-Journal with Package]) and [Order Placed with Vendor]) 
+    or [E-Journal Current Online Subscription]="Yes"
+    or [Online Subscription Ordered] 
+    or [Platform / URL]), "Access Activation", null),
+If([Proxied?]=false 
+    and (Begins([Native URL], "http://") or Begins([Native URL], "https://"))
+    and ([Access Activated?] or [Trial Wanted] or [Platform / URL]), "Proxying", null),
+If([Alma Activation Done (e-journal)]=false and 
+    (([Request Type]="E-Journal" and [License Ready] and [Access Activated?] and [Proxied?] 
+       and ([Order Placed with Vendor] or [E-Journal Current Online Subscription]="Yes"
+       or [Online Subscription Ordered]))
+     or ([Request Type]="E-Journal, Free" and [License Ready])
+    ), "Alma Activation", null),
+If([Alma Activation Done (e-resource)]=false and
+    (([Request Type]="E-Resource, New" and [License Ready] and [Access Activated?] and [Proxied?]
+      and [Order Placed with Vendor])
+      or ([Request Type]="E-Resource, Free" and [License Ready])
+      or ([Platform / URL] and [Access Activated?] and [Proxied?]) 
+    ), "Alma Activation", null),
+If([Status]<>"Completed" and 
+    (([Request Type]="E-Resource, New" or [Request Type]="E-Resource, Free") 
+      and [License Ready] and [Alma Activation Done (e-resource)])
+    or (([Request Type]="E-Journal" or [Request Type]="E-Journal, Free") 
+      and [License Ready] and ([Alma Activation Done (e-journal)])
+    or ([Request Type]="Re-License" and [License Ready])
+    or ([Request Type]="E-Resource, Update" and [Platform / URL] 
+      and [Access Activated?] and [Proxied?] and [Alma Activation Done (e-resource)])
+    or ([Request Type]="E-Resource, Update" and [Acquisition Info] and
+             ([Order Placed with Vendor] or [Invoice Location]<>"" or 
+               [One-Time Purchase Cost]<>0 or [Subscription Cost]<>0 or
+               [FUNDING COMPLETE] or [Account # (if provided by vendor)]<>""))), "Final Review", null)
+);
+If($active = "" or [Status]="Completed", "", $active)
